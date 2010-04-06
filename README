@@ -1,0 +1,16 @@
+In around 30 lines of code, I implemented a small subset of the XMLHttpRequest API using postMessage. While the better pmxdr project does the same thing, it uses a different API. I just implemented it with the normal XMLHTTPRequest API, which isn't the ideal way anyway, but works. Notably, my code relies on json2.js unless you're relying on Native JSON and DOM Level 3 window.addEventListener.
+
+Just use pmXMLHttpRequest instead of XMLHttpRequest.
+
+== What you can't do. ==
+Synchronous XHR
+
+
+== What you can do ==
+.open
+.send
+.setRequestHeader
+
+.responseText
+.readyState
+.status
