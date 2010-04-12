@@ -1,0 +1,55 @@
+<head><script>
+
+function pmXMLHttpRequest(){
+  this.w = window.frames[0]; //hack todo:fix
+  
+  var id = "x"+(~-(Math.random()*9e9));
+  this._id = id;
+  this._s("create", []);
+  
+  pmXMLHttpRequest.xhr_list[id] = this;
+  this.readyState = 0;
+  this.responseText = "";
+  this.status = 0;
+
+}
+
+for(var i = "send,setRequestHeader,abort".split(","), l=i.length; l--;){
+  (function(m){
+    pmXMLHttpRequest.prototype[m] = function(){
+      this._s(m, arguments);
+    }
+  })(i[l])
+}
+
+pmXMLHttpRequest.xhr_list = {};
+
+pmXMLHttpRequest.prototype._s = function(op, arg){
+  this.w.postMessage(JSON.stringify(["pmxhr", op, this._id].concat(Array.prototype.slice.call(arg,0))),"*");
+}
+pmXMLHttpRequest.prototype.open = function(method, url, async){
+  if(async == false) alert("Synchronous XHR Unsupported");
+  this._s("open", arguments)
+}
+
+pmXMLHttpRequest.prototype.onreadystatechange = function(){}
+
+
+
+
+window.addEventListener("message", function(e){
+  var parts = JSON.parse(e.data);
+  if(parts[0] != "pmxhr") return;
+  if(parts[1] == "change"){
+    var xhr = pmXMLHttpRequest.xhr_list[parts[2]];
+    xhr.responseText = parts[3]
+    xhr.readyState = parts[4];
+    xhr.status = parts[5];
+    xhr.onreadystatechange();
+  }
+}, false)
+
+
+</script>
+</head><body><iframe src="http://192.168.1.149/read/pmxhr-proxy.html?ab"></iframe>
+</body>

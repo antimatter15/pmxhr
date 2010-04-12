@@ -1,0 +1,23 @@
+<script>
+var xhr_list = {};
+
+
+window.addEventListener("message", function(e){
+  var parts = JSON.parse(e.data);
+  if(parts[0] != "pmxhr") return;
+  var src = e.source, op = parts[1], id = parts[2];
+  console.log(parts)
+  if(op == "create"){
+    
+    var xhr = new XMLHttpRequest(), ID = id;
+    xhr_list[ID] = xhr;
+    xhr.onreadystatechange = function(){
+      try{
+        src.postMessage(JSON.stringify(["pmxhr", "change", ID, xhr.responseText, xhr.readyState, xhr.status]), "*");
+      }catch(err){};
+    }
+  }else{
+    xhr_list[id][op].apply(xhr_list[id], parts.slice(3));
+  }
+}, false);
+</script>
